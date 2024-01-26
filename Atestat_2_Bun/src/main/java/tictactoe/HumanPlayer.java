@@ -10,19 +10,12 @@ public class HumanPlayer extends Player {
         super(name, mark);
     }
 
-    public int determineMove(Board board) {
-        String prompt = "> " + getName() + " (" + getMark().toString() + ")"
-                + ", ce alegi? ";
-        
-        System.out.println(prompt);
-        int choice = TextIO.getInt();
-        
+    public int determineMove(Board board, UI viewer) {
+        int choice = viewer.makeMove(getName(), getMark());
         boolean valid = board.isField(choice) && board.isEmptyField(choice);
         while (!valid) {
-            System.out.println("ERROARE: locul " + choice
-                    + " e ocupat deja.");
-            System.out.println(prompt);
-            choice = TextIO.getInt();
+            viewer.moveTaken(choice);
+            choice = viewer.makeMove(getName(), getMark());
             valid = board.isField(choice) && board.isEmptyField(choice);
         }
         return choice;

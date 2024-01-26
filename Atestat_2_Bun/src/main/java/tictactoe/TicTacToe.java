@@ -12,6 +12,18 @@ public class TicTacToe {
     );
 
     public static void main(String[] args) {
+       boolean isGUIDecided = false;
+       String viewer = "";
+        while (!isGUIDecided) {
+            System.out.println("Te rog alege tipul de viewer \n Scrie GUI sau TUI:");
+            viewer = TextIO.getln();
+            if ("GUI".equalsIgnoreCase(viewer) || "TUI".equalsIgnoreCase(viewer)) {
+                isGUIDecided = true;
+                break;
+            }
+            System.out.println("Ai scris un UI necunoscut, te rog incearca din nou");
+        }
+
         System.out.println("Nume prim jucator:");
         String name1 = TextIO.getln();
 
@@ -26,7 +38,7 @@ public class TicTacToe {
                 ? new ComputerPlayer(Mark.XX, STRATEGIES.get(name2))
                 : new HumanPlayer(name2, Mark.XX);
 
-        Game game = new Game(player1, player2);
+        Game game = new Game(player1, player2, viewer);
         game.start();
     }
 }

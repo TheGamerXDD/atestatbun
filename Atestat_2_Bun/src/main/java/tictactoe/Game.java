@@ -1,9 +1,9 @@
 package tictactoe;
 
-import utils.TextIO;
-
 public class Game {
     public static final int NUMBER_PLAYERS = 2;
+
+    private UI viewer;
 
     private Board board;
 
@@ -11,12 +11,14 @@ public class Game {
 
     private int current;
 
-    public Game(Player s0, Player s1) {
+    public Game(Player s0, Player s1, String viewer) {
         board = new Board();
         players = new Player[NUMBER_PLAYERS];
         players[0] = s0;
         players[1] = s1;
         current = 0;
+
+        this.viewer = viewer.equalsIgnoreCase("GUI") ? new TicTacToeGUI(board) : new TicTacToeTUI(board);
     }
 
 
@@ -25,8 +27,7 @@ public class Game {
         while (continueGame) {
             reset();
             play();
-            System.out.println("\n> Inca un joc? (y/n)?");
-            continueGame = TextIO.getBoolean();
+            continueGame = viewer.askNewGame();
         }
     }
 
@@ -38,31 +39,23 @@ public class Game {
 
 
     private void play() {
-        System.out.println(board.toString());
+        viewer.update();
 
-        while (!board.hasWinner() && !board.isFull()) {
-            players[current].makeMove(board);
+        while (!board.gameOver()) {
+            players[current].makeMove(board, viewer);
 
             current = current == 1 ? 0 : 1;
-            update();
+            viewer.update();
         }
 
-        printResult();
+        viewer.printResult(getWinner());
     }
 
-
-    private void update() {
-        System.out.println("\nsituatia actuala a jocului: \n\n" + board.toString()
-                + "\n");
-    }
-
-
-    private void printResult() {
-        if (board.hasWinner()) {
-            Player winner = board.isWinner(players[0].getMark()) ? players[0] : players[1];
-            System.out.println("Jucator " + winner.getName() + " (" + winner.getMark().toString() + ") a castigat!");
-        } else {
-            System.out.println("Blocaj, nu e nici un castigator!");
+    private Player getWinner()
+    {
+        if(!board.hasWinner())  {
+            return null;
         }
+       return board.isWinner(players[0].getMark()) ? players[0] : players[1];
     }
 }

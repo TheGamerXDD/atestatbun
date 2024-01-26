@@ -5,12 +5,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class TicTacToeGUI extends JFrame implements ActionListener {
+public class TicTacToeGUI extends JFrame implements ActionListener, UI {
+
+    private Board board;
     private JButton[][] buttons;
     private boolean isPlayerX;
     private int moves;
 
-    public TicTacToeGUI() {
+    public TicTacToeGUI(Board board) {
         setTitle("Tic Tac Toe");
         setSize(300, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -107,7 +109,36 @@ public class TicTacToeGUI extends JFrame implements ActionListener {
         moves = 0;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new TicTacToeGUI());
+    /**
+     * Metoda folosita sa updateze jocul
+     */
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public int makeMove(String name, Mark mark) {
+        return 0;
+    }
+
+    @Override
+    public void moveTaken(int choice) {
+
+    }
+
+    /**
+     * Metoda folosita pentru a printa rezultatul
+     *
+     * @param winner - daca e NULL nu exista castigatori
+     */
+    @Override
+    public void printResult(Player winner) {
+
+    }
+
+    @Override
+    public boolean askNewGame() {
+        return false;
     }
 }

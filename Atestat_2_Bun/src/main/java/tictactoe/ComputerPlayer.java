@@ -17,7 +17,7 @@ public class ComputerPlayer extends Player {
     }
 
     @Override
-    public int determineMove(Board board) {
+    public int determineMove(Board board, UI viewer) {
         return this.strategy.determineMove(board, getMark());
     }
 }

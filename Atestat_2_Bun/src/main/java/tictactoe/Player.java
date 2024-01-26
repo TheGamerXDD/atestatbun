@@ -18,10 +18,10 @@ public abstract class Player {
         return mark;
     }
 
-    public abstract int determineMove(Board board);
+    public abstract int determineMove(Board board, UI viewer);
 
-    public void makeMove(Board board) {
-        int choice = determineMove(board);
+    public void makeMove(Board board, UI viewer) {
+        int choice = determineMove(board, viewer);
         board.setField(choice, getMark());
     }
 
