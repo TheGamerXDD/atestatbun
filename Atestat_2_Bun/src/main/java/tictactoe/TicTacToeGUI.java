@@ -9,10 +9,15 @@ public class TicTacToeGUI extends JFrame implements ActionListener, UI {
 
     private Board board;
     private JButton[][] buttons;
+
+    final Object o = new Object();
+
+    private int lastMove = 0;
     private boolean isPlayerX;
     private int moves;
 
     public TicTacToeGUI(Board board) {
+        this.board = board;
         setTitle("Tic Tac Toe");
         setSize(300, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,6 +34,9 @@ public class TicTacToeGUI extends JFrame implements ActionListener, UI {
             for (int j = 0; j < 3; j++) {
                 buttons[i][j] = new JButton();
                 buttons[i][j].setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
+                buttons[i][j].setBackground(Color.GRAY);
+                buttons[i][j].setForeground(Color.BLACK);
+              //  buttons[i][j].setPressedBackgroundColor(Color.PINK);
                 buttons[i][j].addActionListener(this);
                 panel.add(buttons[i][j]);
             }
@@ -41,26 +49,43 @@ public class TicTacToeGUI extends JFrame implements ActionListener, UI {
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton button = (JButton) e.getSource();
+        for(int i=0; i< Board.DIM; i++)
+        {
+            for(int j=0; j<Board.DIM; j++)
+            {
+                if(buttons[i][j].equals(button))
+                {
+                    synchronized (o){
+                        lastMove = board.index(i, j);
+                        o.notify();
+                        return;
+                    }
 
-        if (button.getText().isEmpty()) {
-            if (isPlayerX) {
-                button.setText("X");
-            } else {
-                button.setText("O");
-            }
-
-            moves++;
-            isPlayerX = !isPlayerX;
-
-            if (checkWin()) {
-                String winner = isPlayerX ? "Player 0" : "Player X";
-                JOptionPane.showMessageDialog(this, winner + " wins!");
-                resetGame();
-            } else if (moves == 9) {
-                JOptionPane.showMessageDialog(this, "It's a draw!");
-                resetGame();
+                }
             }
         }
+
+//        board.hasWinner();
+//
+//        if (button.getText().isEmpty()) {
+//            if (isPlayerX) {
+//                button.setText("X");
+//            } else {
+//                button.setText("O");
+//            }
+//
+//            moves++;
+//            isPlayerX = !isPlayerX;
+//
+//            if (checkWin()) {
+//                String winner = isPlayerX ? "Player 0" : "Player X";
+//                JOptionPane.showMessageDialog(this, winner + " wins!");
+//                resetGame();
+//            } else if (moves == 9) {
+//                JOptionPane.showMessageDialog(this, "It's a draw!");
+//                resetGame();
+//            }
+//        }
     }
 
     private boolean checkWin() {
@@ -114,17 +139,43 @@ public class TicTacToeGUI extends JFrame implements ActionListener, UI {
      */
     @Override
     public void update() {
-
+        for(int i =0; i< Board.DIM; i++)
+        {
+            for(int  j=0; j <Board.DIM ;j++){
+                buttons[i][j].setText(board.getField(i, j).toString());
+            }
+        }
     }
 
     @Override
     public int makeMove(String name, Mark mark) {
-        return 0;
+        synchronized(o) {
+            try {
+                o.wait();
+            } catch (InterruptedException ex) {
+                System.out.println("Interrupted");
+            }
+        }
+
+        return this.lastMove;
     }
 
     @Override
     public void moveTaken(int choice) {
+        int i = choice / Board.DIM;
+        int j = choice % Board.DIM;
+        buttons[i][j].setBackground(Color.RED);
+        buttons[i][j].setForeground(Color.BLACK);
 
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        buttons[i][j].setBackground(Color.GRAY);
+        buttons[i][j].setForeground(Color.BLACK);
+//        System.out.println("AI FACUT O EROARE BAI BAIATULE");
     }
 
     /**
@@ -134,7 +185,10 @@ public class TicTacToeGUI extends JFrame implements ActionListener, UI {
      */
     @Override
     public void printResult(Player winner) {
-
+        if(winner == null)
+        {
+            //Caz in care nu e castigator
+        }
     }
 
     @Override
